@@ -1,0 +1,66 @@
+<html>
+<head>
+	<title>View Database</title>
+	<script src="http://code.jquery.com/jquery-latest.min.js" ></script>
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+<body background="client/img/bg.jpg">
+	<p>Search for Client</p>
+	<input id="name" type="text">
+	<button id="submit">Submit</button>
+	<br>
+	<br>
+	<br>
+	<table id="table" border="1px" style="width:1000px;"></table>
+	<br>
+	<button id="all">Display All</button>
+	<br>
+	<button id="back">Go Back</button>
+	<script>
+		var socket = io.connect('http://127.0.0.1:8080/');
+		var pname = document.getElementById("name");
+		var submit = document.getElementById("submit");
+		var table = document.getElementById("table");
+		var db = null;
+		var back = document.getElementById("back");
+		var all = document.getElementById("all");
+		back.onclick = function() {
+			return window.location.href = "records.html";
+		}
+		submit.onclick = function() {
+			clearTable();
+			socket.emit("requestdb",pname.value);
+		}
+		all.onclick = function() {
+			clearTable();
+			socket.emit("requestdb","all-db");
+		}
+		socket.emit("requestdb","all-db");
+
+		socket.on("senddb",function(data) {
+			var result = data;
+			var l = result.length;
+			for(var i=0;i<l;i++) {
+				var row = table.insertRow(i);
+				var name = row.insertCell(0);
+				var illness = row.insertCell(1);
+				var report = row.insertCell(2);
+				var reportdiv = document.createElement("div");
+				report.appendChild(reportdiv);
+				reportdiv.style.overflow = "auto";
+				reportdiv.style.whiteSpace = "pre-wrap";
+				reportdiv.style.wordWrap = "break-word";
+				reportdiv.style.width="500px";
+				name.innerHTML = "Name: "+result[i].name;
+				illness.innerHTML = "Illness: "+result[i].illness;
+				reportdiv.innerHTML = "Report: "+result[i].report;
+			}
+		});
+		function clearTable() {
+			while(table.rows.length>0) {
+				table.deleteRow(0);
+			}
+		}
+	</script>
+</body>
+</html>

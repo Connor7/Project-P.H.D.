@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Records</title>
+	<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--[if lte IE 8]><script src="assets/js/html5shiv.js"></script><![endif]-->
+    
+    <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+    <noscript><link rel="stylesheet" href="client/css/noscript.css" /></noscript>
+	<script src="/socket.io/socket.io.js"></script>
+</head>
+<body background="client/img/bg.jpg">
+	<center>
+	<p>Name</p>
+	<input id="name" type="text" name="name" required>
+	<p>Illness</p>
+	<input id="illness" name="illness" type="text" size="20" required>
+	<br>
+	<br>
+	<p>Report</p>
+	<textarea id="report" name="report" style="width:600px; height:200px; overflow:auto;" required></textarea>
+	<br>
+	<br>
+	<button id="submit">Submit Record</button>
+	<br>
+	<br>
+	<button id="view">View Database</button>
+	</center>
+	<script>
+		var socket = io.connect('http://127.0.0.1:8080/');
+		var pname = document.getElementById("name");
+		console.log(pname);
+		var illness = document.getElementById("illness");
+		var report = document.getElementById("report");
+		var submit = document.getElementById("submit");
+		var view = document.getElementById("view");
+
+		submit.onclick = function() {
+			var n = pname.value;
+			var i = illness.value;
+			var r = report.value;
+			socket.emit("submitReport",[n,i,r]);
+			pname.value = "";
+			illness.value = "";
+			report.value = "";
+		}
+		view.onclick = function() {
+			return window.location.href = "view.html";
+		}
+	</script>
+</body>
+</html>
